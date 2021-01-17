@@ -23,11 +23,10 @@ const Cube = (props) => {
     x: isBig ? 2 : 0,
   });
 
-  const color = isHovered ? "salmon" : "purple";
+  const color = isHovered ? "salmon" : "pink";
 
   useFrame(() => {
-    mesh.current.rotation.x += 0.01;
-    mesh.current.rotation.y += 0.01;
+    mesh.current.rotation.x += 0.008;
   });
 
   return (
@@ -41,7 +40,7 @@ const Cube = (props) => {
       onPointerOver={() => setIsHover(true)}
     >
       <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
-      <meshStandardMaterial attach="material" {...{ color }} />
+      <meshBasicMaterial attach="material" {...{ color }} />
     </a.mesh>
   );
 };
@@ -62,7 +61,7 @@ const Sphere = (props) => {
     x: isBig ? 2 : 0,
   });
 
-  const color = isHovered ? "salmon" : "orange";
+  const color = isHovered ? "orange" : "salmon";
 
   useFrame(() => {
     mesh.current.rotation.x += 0.01;
@@ -79,8 +78,15 @@ const Sphere = (props) => {
       onPointerOut={() => setIsHover(false)}
       onPointerOver={() => setIsHover(true)}
     >
-      <sphereBufferGeometry attach="geometry" args={[1, 20, 20]} />
-      <meshStandardMaterial attach="material" {...{ color }} />
+      <sphereBufferGeometry attach="geometry" args={[1, 8, 6]} />
+      <meshPhongMaterial
+        flatShading
+        shininess={100}
+        roughness={1}
+        metalness={0.5}
+        attach="material"
+        {...{ color }}
+      />
     </a.mesh>
   );
 };
@@ -128,7 +134,7 @@ const Scene = () => {
   return (
     <>
       <ambientLight />
-      <pointLight intensity={0.3} position={[-1, 2, 4]} />
+      <pointLight intensity={0.5} position={[-1, 2, 4]} />
 
       <Sphere rotation={[10, 10, 0]} position={[0, 0, 0]} />
       <Cube rotation={[10, 20, 0]} position={[2, 2, 0]} />
