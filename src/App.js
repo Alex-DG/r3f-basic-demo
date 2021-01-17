@@ -1,11 +1,9 @@
 import React, { useState, useRef } from "react";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { Canvas, useThree, extend, useFrame } from "react-three-fiber";
+import { Canvas, useFrame } from "react-three-fiber";
 import { a, useSpring } from "react-spring/three";
+import { OrbitControls, Torus } from "drei";
 
 import "./App.css";
-
-extend({ OrbitControls }); // extend r3f with OrbitControls
 
 /**
  * Cube
@@ -141,15 +139,20 @@ const Plane = () => {
 };
 
 const Scene = () => {
-  const {
-    camera,
-    gl: { domElement },
-  } = useThree();
-
   return (
     <>
       <ambientLight />
       <spotLight castShadow intensity={0.6} position={[0, 5, 2]} />
+
+      <Torus args={[1, 0.2, 10, 30]} position={[-2, 1, -1]}>
+        <meshPhongMaterial
+          shininess={100}
+          roughness={1}
+          metalness={0.5}
+          attach="material"
+          color={"gold"}
+        />
+      </Torus>
 
       <Plane />
       <Sphere rotation={[10, 10, 0]} position={[0, 0, 0]} />
@@ -161,7 +164,7 @@ const Scene = () => {
       <Cylinder rotation={[10, 20, 0]} position={[-2, -3, 0]} /> 
       */}
 
-      <orbitControls args={[camera, domElement]} />
+      <OrbitControls />
     </>
   );
 };
