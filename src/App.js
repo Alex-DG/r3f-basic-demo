@@ -61,7 +61,7 @@ const Sphere = (props) => {
     x: isBig ? 2 : 0,
   });
 
-  const color = isHovered ? "orange" : "salmon";
+  const color = isHovered ? "yellow" : "salmon";
 
   useFrame(() => {
     mesh.current.rotation.x += 0.01;
