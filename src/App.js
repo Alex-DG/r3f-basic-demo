@@ -2,9 +2,11 @@ import React, { useState, useRef } from "react";
 import { Canvas, useFrame } from "react-three-fiber";
 import { a, useSpring } from "react-spring/three";
 import { OrbitControls, Torus } from "drei";
-import { useControl, Controls } from "react-three-gui";
+import { useControl, Controls, withControls } from "react-three-gui";
 
 import "./App.css";
+
+const CanvasWithControls = withControls(Canvas);
 
 /**
  * Cube
@@ -197,9 +199,9 @@ const Scene = () => {
 const App = () => {
   return (
     <Controls.Provider>
-      <Controls.Canvas shadowMap>
+      <CanvasWithControls shadowMap>
         <Scene />
-      </Controls.Canvas>
+      </CanvasWithControls>
       <Controls />
     </Controls.Provider>
   );
