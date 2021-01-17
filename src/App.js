@@ -125,6 +125,19 @@ const Cylinder = (props) => {
   );
 };
 
+const Plane = () => {
+  return (
+    <a.mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
+      <planeBufferGeometry
+        attach="geometry"
+        args={[10, 10]}
+        position={[0, -2, 0]}
+      />
+      <meshStandardMaterial attach="material" color="#D3D3D3" />
+    </a.mesh>
+  );
+};
+
 const Scene = () => {
   const {
     camera,
@@ -134,11 +147,17 @@ const Scene = () => {
   return (
     <>
       <ambientLight />
-      <pointLight intensity={0.5} position={[-1, 2, 4]} />
+      <pointLight intensity={0.6} position={[0, 0, 3]} />
 
+      <Plane />
+      <Sphere rotation={[10, 10, 0]} position={[0, 0, 0]} />
+      <Sphere rotation={[10, 20, 0]} position={[2, 2, 0]} />
+
+      {/* 
       <Sphere rotation={[10, 10, 0]} position={[0, 0, 0]} />
       <Cube rotation={[10, 20, 0]} position={[2, 2, 0]} />
-      <Cylinder rotation={[10, 20, 0]} position={[-2, -3, 0]} />
+      <Cylinder rotation={[10, 20, 0]} position={[-2, -3, 0]} /> 
+      */}
 
       <orbitControls args={[camera, domElement]} />
     </>
