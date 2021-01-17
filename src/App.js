@@ -142,7 +142,10 @@ const Scene = () => {
   return (
     <>
       <ambientLight />
-      <spotLight castShadow intensity={0.6} position={[0, 5, 2]} />
+      <spotLight castShadow intensity={0.6} position={[0, 10, 4]} />
+
+      <Sphere rotation={[10, 10, 0]} position={[0, 0, 0]} />
+      <Sphere rotation={[10, 20, 0]} position={[2, 2, 0]} />
 
       <Torus args={[1, 0.2, 10, 30]} position={[-2, 1, -1]}>
         <meshPhongMaterial
@@ -155,8 +158,6 @@ const Scene = () => {
       </Torus>
 
       <Plane />
-      <Sphere rotation={[10, 10, 0]} position={[0, 0, 0]} />
-      <Sphere rotation={[10, 20, 0]} position={[2, 2, 0]} />
 
       {/* 
       <Sphere rotation={[10, 10, 0]} position={[0, 0, 0]} />
