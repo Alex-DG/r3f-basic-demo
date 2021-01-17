@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Canvas, useFrame } from "react-three-fiber";
 import { a, useSpring } from "react-spring/three";
 import { OrbitControls, Torus } from "drei";
+import { useControl, Controls } from "react-three-gui";
 
 import "./App.css";
 
@@ -48,7 +49,7 @@ import "./App.css";
  *
  * sphere args=[radius,widthSegments,heightSegments]}
  */
-const Sphere = (props) => {
+const Sphere = ({ animate, ...props }) => {
   const mesh = useRef();
 
   const [isBig, setIsBig] = useState(false);
@@ -62,8 +63,10 @@ const Sphere = (props) => {
   const color = isHovered ? "yellow" : "salmon";
 
   useFrame(() => {
-    mesh.current.rotation.x += 0.01;
-    mesh.current.rotation.y += 0.01;
+    if (animate) {
+      mesh.current.rotation.x += 0.01;
+      mesh.current.rotation.y += 0.01;
+    }
   });
 
   return (
@@ -81,9 +84,9 @@ const Sphere = (props) => {
       <sphereBufferGeometry attach="geometry" args={[1, 8, 6]} />
       <meshPhongMaterial
         flatShading
-        shininess={100}
         roughness={1}
         metalness={0.5}
+        shininess={100}
         attach="material"
         {...{ color }}
       />
@@ -139,13 +142,34 @@ const Plane = () => {
 };
 
 const Scene = () => {
+  const positionX = useControl("Pos X", {
+    type: "number",
+    max: 10,
+    min: -10,
+  });
+  const positionY = useControl("Pos Y", {
+    type: "number",
+    max: 10,
+    min: -10,
+  });
+
+  const { x, y } = useControl("Rotation", {
+    type: "xypad",
+  });
+
+  const color = useControl("Torus Color", {
+    type: "color",
+    value: "gold",
+    inline: true,
+  });
+
   return (
     <>
       <ambientLight />
       <spotLight castShadow intensity={0.6} position={[0, 10, 4]} />
 
-      <Sphere rotation={[10, 10, 0]} position={[0, 0, 0]} />
-      <Sphere rotation={[10, 20, 0]} position={[2, 2, 0]} />
+      <Sphere rotation={[x, y, 0]} position={[positionX, positionY, 0]} />
+      <Sphere rotation={[10, 20, 0]} position={[2, 2, 0]} animate />
 
       <Torus args={[1, 0.2, 10, 30]} position={[-2, 1, -1]}>
         <meshPhongMaterial
@@ -153,7 +177,7 @@ const Scene = () => {
           roughness={1}
           metalness={0.5}
           attach="material"
-          color={"gold"}
+          {...{ color }}
         />
       </Torus>
 
@@ -172,9 +196,12 @@ const Scene = () => {
 
 const App = () => {
   return (
-    <Canvas shadowMap>
-      <Scene />
-    </Canvas>
+    <Controls.Provider>
+      <Controls.Canvas shadowMap>
+        <Scene />
+      </Controls.Canvas>
+      <Controls />
+    </Controls.Provider>
   );
 };
 
