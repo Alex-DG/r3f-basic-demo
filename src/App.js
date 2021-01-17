@@ -12,38 +12,38 @@ extend({ OrbitControls }); // extend r3f with OrbitControls
  *
  * box args=[width,height,depth]}
  */
-const Cube = (props) => {
-  const mesh = useRef();
+// const Cube = (props) => {
+//   const mesh = useRef();
 
-  const [isBig, setIsBig] = useState(false);
-  const [isHovered, setIsHover] = useState(false);
+//   const [isBig, setIsBig] = useState(false);
+//   const [isHovered, setIsHover] = useState(false);
 
-  const { size, x } = useSpring({
-    size: isBig ? [2, 2, 2] : [1, 1, 1],
-    x: isBig ? 2 : 0,
-  });
+//   const { size, x } = useSpring({
+//     size: isBig ? [2, 2, 2] : [1, 1, 1],
+//     x: isBig ? 2 : 0,
+//   });
 
-  const color = isHovered ? "salmon" : "pink";
+//   const color = isHovered ? "salmon" : "pink";
 
-  useFrame(() => {
-    mesh.current.rotation.x += 0.008;
-  });
+//   useFrame(() => {
+//     mesh.current.rotation.x += 0.008;
+//   });
 
-  return (
-    <a.mesh
-      {...props}
-      ref={mesh}
-      scale={size}
-      position-x={x}
-      onClick={() => setIsBig(!isBig)}
-      onPointerOut={() => setIsHover(false)}
-      onPointerOver={() => setIsHover(true)}
-    >
-      <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
-      <meshBasicMaterial attach="material" {...{ color }} />
-    </a.mesh>
-  );
-};
+//   return (
+//     <a.mesh
+//       {...props}
+//       ref={mesh}
+//       scale={size}
+//       position-x={x}
+//       onClick={() => setIsBig(!isBig)}
+//       onPointerOut={() => setIsHover(false)}
+//       onPointerOver={() => setIsHover(true)}
+//     >
+//       <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
+//       <meshBasicMaterial attach="material" {...{ color }} />
+//     </a.mesh>
+//   );
+// };
 
 /**
  * Sphere
@@ -77,6 +77,8 @@ const Sphere = (props) => {
       onClick={() => setIsBig(!isBig)}
       onPointerOut={() => setIsHover(false)}
       onPointerOver={() => setIsHover(true)}
+      receiveShadow
+      castShadow
     >
       <sphereBufferGeometry attach="geometry" args={[1, 8, 6]} />
       <meshPhongMaterial
@@ -91,50 +93,50 @@ const Sphere = (props) => {
   );
 };
 
-const Cylinder = (props) => {
-  const mesh = useRef();
+// const Cylinder = (props) => {
+//   const mesh = useRef();
 
-  const [isBig, setIsBig] = useState(false);
-  const [isHovered, setIsHover] = useState(false);
+//   const [isBig, setIsBig] = useState(false);
+//   const [isHovered, setIsHover] = useState(false);
 
-  const { size, x } = useSpring({
-    size: isBig ? [2, 2, 2] : [1, 1, 1],
-    x: isBig ? 2 : 0,
-  });
+//   const { size, x } = useSpring({
+//     size: isBig ? [2, 2, 2] : [1, 1, 1],
+//     x: isBig ? 2 : 0,
+//   });
 
-  const color = isHovered ? "salmon" : "red";
+//   const color = isHovered ? "salmon" : "red";
 
-  useFrame(() => {
-    mesh.current.rotation.x += 0.01;
-    mesh.current.rotation.y += 0.01;
-  });
+//   useFrame(() => {
+//     mesh.current.rotation.x += 0.01;
+//     mesh.current.rotation.y += 0.01;
+//   });
 
-  return (
-    <a.mesh
-      {...props}
-      ref={mesh}
-      scale={size}
-      position-x={x}
-      onClick={() => setIsBig(!isBig)}
-      onPointerOut={() => setIsHover(false)}
-      onPointerOver={() => setIsHover(true)}
-    >
-      <cylinderBufferGeometry attach="geometry" args={[1, 1, 2, 20]} />
-      <meshStandardMaterial attach="material" {...{ color }} />
-    </a.mesh>
-  );
-};
+//   return (
+//     <a.mesh
+//       {...props}
+//       ref={mesh}
+//       scale={size}
+//       position-x={x}
+//       onClick={() => setIsBig(!isBig)}
+//       onPointerOut={() => setIsHover(false)}
+//       onPointerOver={() => setIsHover(true)}
+//     >
+//       <cylinderBufferGeometry attach="geometry" args={[1, 1, 2, 20]} />
+//       <meshStandardMaterial attach="material" {...{ color }} />
+//     </a.mesh>
+//   );
+// };
 
 const Plane = () => {
   return (
-    <a.mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
+    <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, -5]}>
       <planeBufferGeometry
         attach="geometry"
-        args={[10, 10]}
+        args={[20, 20]}
         position={[0, -2, 0]}
       />
       <meshStandardMaterial attach="material" color="#D3D3D3" />
-    </a.mesh>
+    </mesh>
   );
 };
 
@@ -147,7 +149,7 @@ const Scene = () => {
   return (
     <>
       <ambientLight />
-      <pointLight intensity={0.6} position={[0, 0, 3]} />
+      <spotLight castShadow intensity={0.6} position={[0, 5, 2]} />
 
       <Plane />
       <Sphere rotation={[10, 10, 0]} position={[0, 0, 0]} />
@@ -166,7 +168,7 @@ const Scene = () => {
 
 const App = () => {
   return (
-    <Canvas colorManagement>
+    <Canvas shadowMap>
       <Scene />
     </Canvas>
   );
