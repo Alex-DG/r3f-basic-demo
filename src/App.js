@@ -1,21 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { Canvas, useThree, extend } from "react-three-fiber";
+import { Canvas, useThree, extend, useFrame } from "react-three-fiber";
 
 import "./App.css";
 
 extend({ OrbitControls }); // extend r3f with OrbitControls
 
 const Cube = (props) => {
+  const mesh = useRef();
+
   const [isBig, setIsBig] = useState(false);
   const [isHovered, setIsHover] = useState(false);
 
   const size = isBig ? 2 : 1;
   const color = isHovered ? "salmon" : "orange";
 
+  useFrame(() => {
+    mesh.current.rotation.x += 0.01;
+    mesh.current.rotation.y += 0.01;
+  });
+
   return (
     <mesh
       {...props}
+      ref={mesh}
       onClick={() => setIsBig(!isBig)}
       onPointerOut={() => setIsHover(false)}
       onPointerOver={() => setIsHover(true)}
