@@ -1,226 +1,57 @@
-import React, { useState, useRef, Suspense } from 'react'
-import { Canvas, useFrame, useLoader } from 'react-three-fiber'
-import { a, useSpring } from 'react-spring/three'
-import { OrbitControls, Torus } from 'drei'
-import { useControl, Controls, withControls } from 'react-three-gui'
-import { TextureLoader } from 'three'
-
-import imageUrl from './logo.png'
-
+import * as THREE from 'three'
+import React, { useRef } from 'react'
+import { OrbitControls } from 'drei'
+import { Canvas, useFrame } from 'react-three-fiber'
 import './App.css'
 
-const CanvasWithControls = withControls(Canvas)
+const tempObject = new THREE.Object3D()
 
-/**
- * Cube
- *
- * box args=[width,height,depth]}
- */
-const Cube = (props) => {
-  const mesh = useRef()
-
-  const [isBig, setIsBig] = useState(false)
-  const [isHovered, setIsHover] = useState(false)
-
-  const { size, x } = useSpring({
-    size: isBig ? [2, 2, 2] : [1, 1, 1],
-    x: isBig ? 2 : 0,
-  })
-
-  const color = isHovered ? 'black' : 'lightblue'
-
-  const texture = useLoader(TextureLoader, imageUrl)
+const Boxes = () => {
+  const ref = useRef()
 
   useFrame(() => {
-    mesh.current.rotation.x += 0.008
-    mesh.current.rotation.y += 0.008
-  })
-
-  return (
-    <a.mesh
-      {...props}
-      ref={mesh}
-      scale={size}
-      position-x={x}
-      onClick={() => setIsBig(!isBig)}
-      onPointerOut={() => setIsHover(false)}
-      onPointerOver={() => setIsHover(true)}
-    >
-      <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
-      <meshPhongMaterial
-        attach="material"
-        map={texture}
-        roughness={1}
-        metalness={0.5}
-        shininess={200}
-        flatShading
-        {...{ color }}
-      />
-    </a.mesh>
-  )
-}
-
-/**
- * Sphere
- *
- * sphere args=[radius,widthSegments,heightSegments]}
- */
-const Sphere = ({ animate, ...props }) => {
-  const mesh = useRef()
-
-  const [isBig, setIsBig] = useState(false)
-  const [isHovered, setIsHover] = useState(false)
-
-  const { size, x } = useSpring({
-    size: isBig ? [2, 2, 2] : [1, 1, 1],
-    x: isBig ? 2 : 0,
-  })
-
-  const color = isHovered ? 'salmon' : 'pink'
-
-  useFrame(() => {
-    if (animate) {
-      mesh.current.rotation.x += 0.01
-      mesh.current.rotation.y += 0.01
+    let i = 0
+    for (let x = 0; x < 10; x++) {
+      for (let y = 0; y < 10; y++) {
+        for (let z = 0; z < 10; z++) {
+          const id = i++
+          tempObject.position.set(5 - x, 5 - y, 5 - z)
+          tempObject.updateMatrix()
+          ref.current.setMatrixAt(id, tempObject.matrix)
+        }
+      }
     }
+
+    ref.current.rotation.x += 0.005
+    ref.current.rotation.z += 0.005
   })
 
   return (
-    <a.mesh
-      {...props}
-      ref={mesh}
-      scale={size}
-      position-x={x}
-      onClick={() => setIsBig(!isBig)}
-      onPointerOut={() => setIsHover(false)}
-      onPointerOver={() => setIsHover(true)}
-      receiveShadow
-      castShadow
-    >
-      <sphereBufferGeometry attach="geometry" args={[1, 8, 6]} />
-      <meshPhongMaterial
-        flatShading
-        roughness={1}
-        metalness={0.5}
-        shininess={100}
-        attach="material"
-        {...{ color }}
-      />
-    </a.mesh>
+    <instancedMesh ref={ref} args={[null, null, 1000]}>
+      <boxBufferGeometry attach="geometry" args={[0.7, 0.7, 0.7]} />
+      <meshPhongMaterial attach="material" color="salmon" />
+    </instancedMesh>
   )
 }
 
-// const Cylinder = (props) => {
-//   const mesh = useRef();
-
-//   const [isBig, setIsBig] = useState(false);
-//   const [isHovered, setIsHover] = useState(false);
-
-//   const { size, x } = useSpring({
-//     size: isBig ? [2, 2, 2] : [1, 1, 1],
-//     x: isBig ? 2 : 0,
-//   });
-
-//   const color = isHovered ? "salmon" : "red";
-
-//   useFrame(() => {
-//     mesh.current.rotation.x += 0.01;
-//     mesh.current.rotation.y += 0.01;
-//   });
-
-//   return (
-//     <a.mesh
-//       {...props}
-//       ref={mesh}
-//       scale={size}
-//       position-x={x}
-//       onClick={() => setIsBig(!isBig)}
-//       onPointerOut={() => setIsHover(false)}
-//       onPointerOver={() => setIsHover(true)}
-//     >
-//       <cylinderBufferGeometry attach="geometry" args={[1, 1, 2, 20]} />
-//       <meshStandardMaterial attach="material" {...{ color }} />
-//     </a.mesh>
-//   );
-// };
-
-const Plane = () => {
-  return (
-    <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, -5]}>
-      <planeBufferGeometry
-        attach="geometry"
-        args={[20, 20]}
-        position={[0, -2, 0]}
-      />
-      <meshStandardMaterial attach="material" color="#D3D3D3" />
-    </mesh>
-  )
-}
-
-const Scene = () => {
-  const positionX = useControl('Pos X', {
-    type: 'number',
-    max: 10,
-    min: -10,
-  })
-  const positionY = useControl('Pos Y', {
-    type: 'number',
-    max: 10,
-    min: -10,
-  })
-
-  const { x, y } = useControl('Rotation', {
-    type: 'xypad',
-  })
-
-  const color = useControl('Torus Color', {
-    type: 'color',
-    value: 'gold',
-    inline: true,
-  })
-
+function Scene() {
   return (
     <>
       <ambientLight />
-      <spotLight castShadow intensity={0.6} position={[0, 10, 4]} />
-
-      <Suspense fallback={null}>
-        <Cube rotation={[x, y, 0]} position={[positionX, positionY, 0]} />
-      </Suspense>
-
-      <Sphere rotation={[10, 20, 0]} position={[2, 2, 0]} animate />
-
-      <Torus args={[1, 0.2, 10, 30]} position={[-2, 1, -1]}>
-        <meshPhongMaterial
-          shininess={100}
-          roughness={1}
-          metalness={0.5}
-          attach="material"
-          {...{ color }}
-        />
-      </Torus>
-
-      <Plane />
-
-      {/*
-      <Sphere rotation={[10, 10, 0]} position={[0, 0, 0]} />
-      <Cube rotation={[10, 20, 0]} position={[2, 2, 0]} />
-      <Cylinder rotation={[10, 20, 0]} position={[-2, -3, 0]} />
-      */}
-
+      <pointLight intensity={0.6} position={[0, 10, 4]} />
+      <Boxes />
       <OrbitControls />
     </>
   )
 }
 
-const App = () => {
+function App() {
   return (
-    <Controls.Provider>
-      <CanvasWithControls shadowMap>
+    <>
+      <Canvas camera={{ position: [0, 0, 20] }}>
         <Scene />
-      </CanvasWithControls>
-      <Controls />
-    </Controls.Provider>
+      </Canvas>
+    </>
   )
 }
 
