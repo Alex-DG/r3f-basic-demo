@@ -29,7 +29,7 @@ const Boxes = () => {
   return (
     <instancedMesh ref={ref} args={[null, null, 1000]}>
       <boxBufferGeometry attach="geometry" args={[0.7, 0.7, 0.7]} />
-      <meshPhongMaterial attach="material" color="salmon" />
+      <meshPhongMaterial attach="material" color="teal" />
     </instancedMesh>
   )
 }
