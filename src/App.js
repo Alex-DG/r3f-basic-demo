@@ -9,21 +9,26 @@ const tempObject = new THREE.Object3D()
 const Boxes = () => {
   const ref = useRef()
 
-  useFrame(() => {
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime()
+    const grow = Math.sin(time / 1)
+
+    ref.current.rotation.x = grow
+    ref.current.rotation.z = grow
+
     let i = 0
     for (let x = 0; x < 10; x++) {
       for (let y = 0; y < 10; y++) {
         for (let z = 0; z < 10; z++) {
           const id = i++
-          tempObject.position.set(5 - x, 5 - y, 5 - z)
+          tempObject.position.set(5 - x * grow, 5 - y * grow, 5 - z * grow)
           tempObject.updateMatrix()
           ref.current.setMatrixAt(id, tempObject.matrix)
         }
       }
     }
 
-    ref.current.rotation.x += 0.005
-    ref.current.rotation.z += 0.005
+    ref.current.instanceMatrix.needsUpdate = true
   })
 
   return (
@@ -48,7 +53,13 @@ function Scene() {
 function App() {
   return (
     <>
-      <Canvas camera={{ position: [0, 0, 20] }}>
+      <Canvas
+        camera={{
+          position: [0, 0, 15],
+          near: 1,
+          far: 40,
+        }}
+      >
         <Scene />
       </Canvas>
     </>
